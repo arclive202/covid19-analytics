@@ -64,7 +64,7 @@ def get_covid_ts(covid_pdf):
   covid_lat_long_pdf=covid_pdf.merge(country_centroids_df[['country','name','latitude','longitude']], how='inner', left_on=['Country'], right_on=['name'])
   return covid_lat_long_pdf
   
-def draw_barchart(current_key,key_name,value_name,grp_key_name,df,top_count):
+def draw_barchart(current_key,key_name,value_name,grp_key_name,df,top_count,title):
     palette='tab20'
     if top_count<=10: 
         palette='tab10' 
@@ -90,8 +90,8 @@ def draw_barchart(current_key,key_name,value_name,grp_key_name,df,top_count):
     ax.margins(0, 0.01)
     ax.grid(which='major', axis='x', linestyle='-')
     ax.set_axisbelow(True)
-    ax.text(0, 1.15, 'COVID-19 Progression Race Bar Chart',
+    ax.text(0, 1.15, title,
             transform=ax.transAxes, size=24, weight=600, ha='left', va='top')
-    ax.text(1, 0, 'by @pradeepreddy; credit @pratapvardhan @jburnmurdoch', transform=ax.transAxes, color='#777777', ha='right',
+    ax.text(1, 0, 'by @pradeepreddy;', transform=ax.transAxes, color='#777777', ha='right',
             bbox=dict(facecolor='white', alpha=0.8, edgecolor='white'))
     plt.box(False)
