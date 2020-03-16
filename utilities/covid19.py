@@ -15,11 +15,10 @@ def refine(covid_df):
                       var_name="Date", 
                       value_name="Value")
 
-    covid_refined_pdf=covid_refined_pdf \
-          .drop(columns=['Province/State','Lat','Long']) \        
-          .groupby(['Country/Region','Date']).sum() \
-          .reset_index(drop=False) \
-          .rename(columns={"Country/Region": "Country"})
+    covid_refined_pdf=covid_refined_pdf.drop(columns=['Province/State','Lat','Long']) \
+        .groupby(['Country/Region','Date']).sum() \
+        .reset_index(drop=False) \
+        .rename(columns={"Country/Region": "Country"})
 
     covid_refined_pdf['DateTime']=pd.to_datetime(covid_refined_pdf['Date'])
     covid_refined_pdf['Date']= \
