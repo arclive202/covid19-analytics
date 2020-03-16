@@ -10,13 +10,13 @@ from lxml import html
 from bs4 import BeautifulSoup
 
 def refine(covid_df):
-    covid_refined_pdf=covid_df.melt(id_vars=["Province/State", \
+    covid_refined_pdf=covid_df.melt(id_vars=["Province/State", 
                      "Country/Region","Lat","Long"], 
                       var_name="Date", 
                       value_name="Value")
 
     covid_refined_pdf=covid_refined_pdf \
-                  .drop(columns=['Province/State','Lat','Long']) \        
+          .drop(columns=['Province/State','Lat','Long']) \        
           .groupby(['Country/Region','Date']).sum() \
           .reset_index(drop=False) \
           .rename(columns={"Country/Region": "Country"})
