@@ -52,6 +52,50 @@ def ingest():
   covid_pdf = covid_pdf.rename(columns={"Value_x": "Confirmed","Value_y":"Deaths","Value":"Recovered"})
   return covid_pdf
 
+def refine_v2(covid_df):
+    covid_refined_pdf=covid_df.melt(id_vars=["Province/State", 
+                     "Country/Region","Lat","Long"], 
+                      var_name="Date", 
+                      value_name="Value")
+
+    covid_refined_pdf=covid_refined_pdf.rename(columns={'Province/State':'State'}) \
+        .rename(columns={"Country/Region": "Country"}) \
+        .groupby(['Country','State','Date']).sum() \
+        .reset_index(drop=False) 
+        
+    covid_refined_pdf['DateTime']=pd.to_datetime(covid_refined_pdf['Date'])
+    covid_refined_pdf['Date']= \
+              covid_refined_pdf['DateTime'].dt.strftime('%m/%d/%y')
+
+
+    covid_refined_pdf=covid_refined_pdf \
+                       .sort_values(by=['Country', 'DateTime'])
+
+    covid_refined_pdf['Country'].mask(covid_refined_pdf['Country'] \
+                        == 'US', 'United States', inplace=True)
+    covid_refined_pdf['Country'].mask(covid_refined_pdf['Country'] \
+                        == 'Korea, South','South Korea', inplace=True)
+    covid_refined_pdf['Country'].mask(covid_refined_pdf['Country'] \
+                        == 'Taiwan*', 'Taiwan', inplace=True)
+    
+    return covid_refined_pdf
+
+def ingest_v2():
+  confirmed_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv'
+  covid_confirmed_df = pd.read_csv(confirmed_ts_url)
+  deaths_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv'
+  covid_deaths_df = pd.read_csv(deaths_ts_url)
+  recovered_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv'
+  covid_recovered_df = pd.read_csv(recovered_ts_url)
+  covid_confirmed_pdf=refine_v2(covid_confirmed_df)
+  covid_deaths_pdf=refine_v2(covid_deaths_df)
+  covid_recovered_pdf=refine_v2(covid_recovered_df)
+  covid_pdf = covid_confirmed_pdf.merge(covid_deaths_pdf[['Country', 'Date','Value']], how='inner', left_on=['Country', 'Date'], right_on=['Country','Date'])
+  covid_pdf = covid_pdf.merge(covid_recovered_pdf[['Country', 'Date','Value']], how='inner', left_on=['Country', 'Date'], right_on=['Country','Date'])
+  covid_pdf = covid_pdf.rename(columns={"Value_x": "Confirmed","Value_y":"Deaths","Value":"Recovered"})
+  return covid_pdf
+    
+
 def get_covid_ts_no_china(covid_pdf):
   covid_no_chi_pdf=covid_pdf[covid_pdf['Country']!='China' ]. \
             sort_values(['DateTime','Confirmed'],ascending=[True,False]).groupby('Date').head(50)
