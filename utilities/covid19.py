@@ -90,11 +90,10 @@ def ingest_v2():
   covid_confirmed_pdf=refine_v2(covid_confirmed_df)
   covid_deaths_pdf=refine_v2(covid_deaths_df)
   covid_recovered_pdf=refine_v2(covid_recovered_df)
-  covid_pdf = covid_confirmed_pdf.merge(covid_deaths_pdf[['Country', 'Date','Value']], how='inner', left_on=['Country', 'Date'], right_on=['Country','Date'])
-  covid_pdf = covid_pdf.merge(covid_recovered_pdf[['Country', 'Date','Value']], how='inner', left_on=['Country', 'Date'], right_on=['Country','Date'])
+  covid_pdf = covid_confirmed_pdf.merge(covid_deaths_pdf[['State','Country', 'Date','Value']], how='inner', left_on=['State','Country', 'Date'], right_on=['State','Country','Date'])
+  covid_pdf = covid_pdf.merge(covid_recovered_pdf[['State','Country', 'Date','Value']], how='inner', left_on=['State','Country', 'Date'], right_on=['State','Country','Date'])
   covid_pdf = covid_pdf.rename(columns={"Value_x": "Confirmed","Value_y":"Deaths","Value":"Recovered"})
-  return covid_pdf
-    
+  return covid_pdf  
 
 def get_covid_ts_no_china(covid_pdf):
   covid_no_chi_pdf=covid_pdf[covid_pdf['Country']!='China' ]. \
