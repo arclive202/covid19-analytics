@@ -52,6 +52,30 @@ def ingest():
   covid_pdf = covid_pdf.rename(columns={"Value_x": "Confirmed","Value_y":"Deaths","Value":"Recovered"})
   return covid_pdf
 
+def ingest_refine_v1():
+    covid_pdf = pd.read_csv('https://query.data.world/s/mszgcko2hys36laqy7rlcfm6nnptwx')
+
+    covid_pdf = covid_pdf.pivot_table(
+            values='Cases', 
+            index=['Date', 'Country_Region','Province_State'], 
+            columns='Case_Type', 
+            aggfunc=np.sum).reset_index(drop=False)
+
+    countries_centroids_url="https://developers.google.com/public-data/docs/canonical/countries_csv"
+    countries_centroids_df=pd.read_html(countries_centroids_url)[0]
+    covid_pdf=covid_pdf.merge(countries_centroids_df[['country','name','latitude','longitude']], how='inner', left_on=['Country_Region'], right_on=['name'])
+    covid_pdf['DateTime'] =pd.to_datetime(covid_pdf.Date)
+    covid_pdf['Date']= \
+                  covid_pdf['DateTime'].dt.strftime('%m/%d/%y')
+
+    covid_pdf = covid_pdf.sort_values(['DateTime','Confirmed'],ascending=[True,False]).groupby('Date').head(50).reset_index()
+
+    covid_pdf = covid_pdf.drop(columns=['Province_State','country']) \
+            .groupby(['Country_Region','Date']).sum() \
+            .reset_index(drop=False) \
+            .rename(columns={"Country_Region": "Country"})
+    return covid_pdf
+
 def ingest_refine_v2():
     us_covid_pdf = pd.read_csv('https://query.data.world/s/mszgcko2hys36laqy7rlcfm6nnptwx')
     us_covid_pdf = us_covid_pdf.pivot_table(
@@ -64,7 +88,7 @@ def ingest_refine_v2():
 
     states_centroids_url="https://developers.google.com/public-data/docs/canonical/states_csv"
     states_centroids_df=pd.read_html(states_centroids_url)[0]
-    us_covid_pdf=us_covid_pdf.merge(states_centroids_df[['state','name','latitude','longitude']], how='inner', left_on=['Province_State'], right_on=['name'])
+    us_covid_pdf=us_covid_pdf.merge(states_centroids_df[['state','name','latitude','longitude']], how='inner', left_on=['Country_Region'], right_on=['name'])
     us_covid_pdf['DateTime'] =pd.to_datetime(us_covid_pdf.Date)
     us_covid_pdf['Date']= \
                   us_covid_pdf['DateTime'].dt.strftime('%m/%d/%y')
