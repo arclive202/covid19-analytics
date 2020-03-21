@@ -80,20 +80,25 @@ def refine_v2(covid_df):
     
     return covid_refined_pdf
 
-def ingest_v2():
-  confirmed_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv'
-  covid_confirmed_df = pd.read_csv(confirmed_ts_url)
-  deaths_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv'
-  covid_deaths_df = pd.read_csv(deaths_ts_url)
-  recovered_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv'
-  covid_recovered_df = pd.read_csv(recovered_ts_url)
-  covid_confirmed_pdf=refine_v2(covid_confirmed_df)
-  covid_deaths_pdf=refine_v2(covid_deaths_df)
-  covid_recovered_pdf=refine_v2(covid_recovered_df)
-  covid_pdf = covid_confirmed_pdf.merge(covid_deaths_pdf[['State','Country', 'Date','Value']], how='inner', left_on=['State','Country', 'Date'], right_on=['State','Country','Date'])
-  covid_pdf = covid_pdf.merge(covid_recovered_pdf[['State','Country', 'Date','Value']], how='inner', left_on=['State','Country', 'Date'], right_on=['State','Country','Date'])
-  covid_pdf = covid_pdf.rename(columns={"Value_x": "Confirmed","Value_y":"Deaths","Value":"Recovered"})
-  return covid_pdf  
+def ingest_refine_v2():
+    us_covid_pdf = pd.read_csv('https://query.data.world/s/mszgcko2hys36laqy7rlcfm6nnptwx')
+    us_covid_pdf = us_covid_pdf.pivot_table(
+            values='Cases', 
+            index=['Date', 'Country_Region','Province_State'], 
+            columns='Case_Type', 
+            aggfunc=np.sum).reset_index(drop=False)
+
+    us_covid_pdf = us_covid_pdf[us_covid_pdf['Country_Region']=='US']
+
+    states_centroids_url="https://developers.google.com/public-data/docs/canonical/states_csv"
+    states_centroids_df=pd.read_html(states_centroids_url)[0]
+    us_covid_pdf=us_covid_pdf.merge(states_centroids_df[['state','name','latitude','longitude']], how='inner', left_on=['Province_State'], right_on=['name'])
+    us_covid_pdf['DateTime'] =pd.to_datetime(us_covid_pdf.Date)
+    us_covid_pdf['Date']= \
+                  us_covid_pdf['DateTime'].dt.strftime('%m/%d/%y')
+
+    us_covid_pdf = us_covid_pdf.sort_values(['DateTime','Confirmed'],ascending=[True,False]).groupby('Date').head(50).reset_index()
+    return us_covid_pdf  
 
 def get_covid_ts_no_china(covid_pdf):
   covid_no_chi_pdf=covid_pdf[covid_pdf['Country']!='China' ]. \
