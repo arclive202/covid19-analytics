@@ -57,9 +57,16 @@ def ingest_refine_v1():
 
     covid_pdf = covid_pdf.pivot_table(
             values='Cases', 
-            index=['Date', 'Country_Region','Province_State'], 
+            index=['Date', 'Country_Region'], 
             columns='Case_Type', 
             aggfunc=np.sum).reset_index(drop=False)
+
+    covid_pdf['Country_Region'].mask(covid_pdf['Country_Region'] \
+                            == 'US', 'United States', inplace=True)
+    covid_pdf['Country_Region'].mask(covid_pdf['Country_Region'] \
+                        == 'Korea, South','South Korea', inplace=True)
+    covid_pdf['Country_Region'].mask(covid_pdf['Country_Region'] \
+                        == 'Taiwan*', 'Taiwan', inplace=True)
 
     countries_centroids_url="https://developers.google.com/public-data/docs/canonical/countries_csv"
     countries_centroids_df=pd.read_html(countries_centroids_url)[0]
@@ -70,7 +77,7 @@ def ingest_refine_v1():
 
     covid_pdf = covid_pdf.sort_values(['DateTime','Confirmed'],ascending=[True,False]).groupby('Date').head(50).reset_index()
 
-    covid_pdf = covid_pdf.drop(columns=['Province_State','country']) \
+    covid_pdf = covid_pdf.drop(columns=['country']) \
             .groupby(['Country_Region','Date']).sum() \
             .reset_index(drop=False) \
             .rename(columns={"Country_Region": "Country"})
