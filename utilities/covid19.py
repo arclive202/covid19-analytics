@@ -52,34 +52,6 @@ def ingest():
   covid_pdf = covid_pdf.rename(columns={"Value_x": "Confirmed","Value_y":"Deaths","Value":"Recovered"})
   return covid_pdf
 
-def refine_v2(covid_df):
-    covid_refined_pdf=covid_df.melt(id_vars=["Province/State", 
-                     "Country/Region","Lat","Long"], 
-                      var_name="Date", 
-                      value_name="Value")
-
-    covid_refined_pdf=covid_refined_pdf.rename(columns={'Province/State':'State'}) \
-        .rename(columns={"Country/Region": "Country"}) \
-        .groupby(['Country','State','Date']).sum() \
-        .reset_index(drop=False) 
-        
-    covid_refined_pdf['DateTime']=pd.to_datetime(covid_refined_pdf['Date'])
-    covid_refined_pdf['Date']= \
-              covid_refined_pdf['DateTime'].dt.strftime('%m/%d/%y')
-
-
-    covid_refined_pdf=covid_refined_pdf \
-                       .sort_values(by=['Country', 'DateTime'])
-
-    covid_refined_pdf['Country'].mask(covid_refined_pdf['Country'] \
-                        == 'US', 'United States', inplace=True)
-    covid_refined_pdf['Country'].mask(covid_refined_pdf['Country'] \
-                        == 'Korea, South','South Korea', inplace=True)
-    covid_refined_pdf['Country'].mask(covid_refined_pdf['Country'] \
-                        == 'Taiwan*', 'Taiwan', inplace=True)
-    
-    return covid_refined_pdf
-
 def ingest_refine_v2():
     us_covid_pdf = pd.read_csv('https://query.data.world/s/mszgcko2hys36laqy7rlcfm6nnptwx')
     us_covid_pdf = us_covid_pdf.pivot_table(
