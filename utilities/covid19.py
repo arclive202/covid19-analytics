@@ -70,7 +70,8 @@ def ingest_refine_v2():
                   us_covid_pdf['DateTime'].dt.strftime('%m/%d/%y')
 
     us_covid_pdf = us_covid_pdf.sort_values(['DateTime','Confirmed'],ascending=[True,False]).groupby('Date').head(50).reset_index()
-    return us_covid_pdf  
+    us_covid_pdf = us_covid_pdf.rename(columns={"Province_State": "State"})
+    return us_covid_pdf
 
 def get_covid_ts_no_china(covid_pdf):
   covid_no_chi_pdf=covid_pdf[covid_pdf['Country']!='China' ]. \
