@@ -105,7 +105,7 @@ def ingest_refine_usa():
 
     states_centroids_url="https://developers.google.com/public-data/docs/canonical/states_csv"
     states_centroids_df=pd.read_html(states_centroids_url)[0]
-    us_covid_pdf=us_covid_pdf.merge(states_centroids_df[['state','name','latitude','longitude']], how='inner', left_on=['Country_Region'], right_on=['name'])
+    us_covid_pdf=us_covid_pdf.merge(states_centroids_df[['state','name','latitude','longitude']], how='inner', left_on=['Province_State'], right_on=['name'])
     us_covid_pdf['DateTime'] =pd.to_datetime(us_covid_pdf.Date)
     us_covid_pdf['Date']= \
                   us_covid_pdf['DateTime'].dt.strftime('%m/%d/%y')
