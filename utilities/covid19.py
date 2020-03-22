@@ -81,6 +81,9 @@ def ingest_refine_world():
             .groupby(['Country_Region','Date','DateTime']).sum() \
             .reset_index(drop=False) \
             .rename(columns={"Country_Region": "Country"})
+    mask_cond=(covid_pdf['Country'] == 'United States') & (covid_pdf['Date']>'03/17/20')
+    covid_pdf['Recovered'].mask(mask_cond ,17, inplace=True)
+    covid_pdf=covid_pdf.sort_values(by=['DateTime', 'Country'])
     return covid_pdf
 
 def ingest_refine_usa():
