@@ -98,7 +98,7 @@ def ingest_refine_usa():
     
     us_covid_pdf['Country_Region'].mask(us_covid_pdf['Country_Region'] \
                             == 'US', 'United States', inplace=True)
-    covid_pdf['Country_Region'].mask(us_covid_pdf['Country_Region'] \
+    us_covid_pdf['Country_Region'].mask(us_covid_pdf['Country_Region'] \
                         == 'Korea, South','South Korea', inplace=True)
     us_covid_pdf['Country_Region'].mask(us_covid_pdf['Country_Region'] \
                         == 'Taiwan*', 'Taiwan', inplace=True)
