@@ -52,7 +52,7 @@ def ingest():
   covid_pdf = covid_pdf.rename(columns={"Value_x": "Confirmed","Value_y":"Deaths","Value":"Recovered"})
   return covid_pdf
 
-def ingest_refine_v1():
+def ingest_refine_world():
     covid_pdf = pd.read_csv('https://query.data.world/s/mszgcko2hys36laqy7rlcfm6nnptwx')
 
     covid_pdf = covid_pdf.pivot_table(
@@ -83,7 +83,7 @@ def ingest_refine_v1():
             .rename(columns={"Country_Region": "Country"})
     return covid_pdf
 
-def ingest_refine_v2():
+def ingest_refine_usa():
     us_covid_pdf = pd.read_csv('https://query.data.world/s/mszgcko2hys36laqy7rlcfm6nnptwx')
     us_covid_pdf = us_covid_pdf.pivot_table(
             values='Cases', 
