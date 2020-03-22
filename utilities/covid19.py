@@ -125,20 +125,10 @@ def get_covid_ts_days_after(covid_world_pdf, num_confirmed):
     covid_country_pdf_after_numcases=pd.DataFrame()
     for country in country_arr:
         covid_country_pdf_after_numcases=covid_country_pdf_after_numcases.append(covid_pdf_after_numcases_journey[covid_pdf_after_numcases_journey['Country']==country].reset_index(drop=True).reset_index(drop=False))
-    covid_country_pdf_after_numcases['days_after_100_cases']=covid_country_pdf_after_numcases['index']
-    covid_country_pdf_after_numcases=covid_country_pdf_after_numcases[covid_country_pdf_after_numcases['Country']!='China'].sort_values(by=['Country','days_after_100_cases'])
+    newcol='days_after_{0}_cases'.format(num_confirmed)
+    covid_country_pdf_after_numcases[newcol]=covid_country_pdf_after_numcases['index']
+    covid_country_pdf_after_numcases=covid_country_pdf_after_numcases[covid_country_pdf_after_numcases['Country']!='China'].sort_values(by=['Country',newcol])
     return covid_country_pdf_after_numcases
-
-def get_covid_ts_days_after_100(covid_world_pdf):
-    covid_pdf_after_100_journey=covid_world_pdf[covid_world_pdf['Confirmed']>100].sort_values(['Country','DateTime'],ascending=[True,True])
-    country_arr=covid_pdf_after_100_journey.Country.unique()
-    covid_pdf_after_100_journey=covid_pdf_after_100_journey.drop(columns=['index'])
-    covid_country_pdf_100=pd.DataFrame()
-    for country in country_arr:
-        covid_country_pdf_100=covid_country_pdf_100.append(covid_pdf_after_100_journey[covid_pdf_after_100_journey['Country']==country].reset_index(drop=True).reset_index(drop=False))
-    covid_country_pdf_100['days_after_100_cases']=covid_country_pdf_100['index']
-    covid_country_pdf_100=covid_country_pdf_100[covid_country_pdf_100['Country']!='China'].sort_values(by=['Country','days_after_100_cases'])
-    return covid_country_pdf_100
 
 def get_covid_ts_no_china(covid_pdf):
   covid_no_chi_pdf=covid_pdf[covid_pdf['Country']!='China' ]. \
