@@ -95,6 +95,13 @@ def ingest_refine_usa():
             aggfunc=np.sum).reset_index(drop=False)
 
     us_covid_pdf = us_covid_pdf[us_covid_pdf['Country_Region']=='US']
+    
+    us_covid_pdf['Country_Region'].mask(us_covid_pdf['Country_Region'] \
+                            == 'US', 'United States', inplace=True)
+    covid_pdf['Country_Region'].mask(us_covid_pdf['Country_Region'] \
+                        == 'Korea, South','South Korea', inplace=True)
+    us_covid_pdf['Country_Region'].mask(us_covid_pdf['Country_Region'] \
+                        == 'Taiwan*', 'Taiwan', inplace=True)
 
     states_centroids_url="https://developers.google.com/public-data/docs/canonical/states_csv"
     states_centroids_df=pd.read_html(states_centroids_url)[0]
