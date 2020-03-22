@@ -8,6 +8,9 @@ from IPython.display import HTML
 from matplotlib import cm
 from lxml import html
 from bs4 import BeautifulSoup
+import os
+from datetime import date, timedelta
+import datetime
 
 def refine(covid_df):
     covid_refined_pdf=covid_df.melt(id_vars=["Province/State", 
