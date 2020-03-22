@@ -78,7 +78,7 @@ def ingest_refine_v1():
     covid_pdf = covid_pdf.sort_values(['DateTime','Confirmed'],ascending=[True,False]).groupby('Date').head(50).reset_index()
 
     covid_pdf = covid_pdf.drop(columns=['country']) \
-            .groupby(['Country_Region','Date']).sum() \
+            .groupby(['Country_Region','Date','DateTime']).sum() \
             .reset_index(drop=False) \
             .rename(columns={"Country_Region": "Country"})
     return covid_pdf
