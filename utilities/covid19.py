@@ -122,7 +122,7 @@ def get_covid_ts_days_after_100(covid_world_pdf):
     covid_country_pdf_100=pd.DataFrame()
     for country in country_arr:
         covid_country_pdf_100=covid_country_pdf_100.append(covid_pdf_after_100_journey[covid_pdf_after_100_journey['Country']==country].reset_index(drop=True).reset_index(drop=False))
-    covid_country_pdf_100['days_after_100']=covid_country_pdf_100['index']
+    covid_country_pdf_100['days_after_100_cases']=covid_country_pdf_100['index']
     covid_country_pdf_100=covid_country_pdf_100[covid_country_pdf_100['Country']!='China'].sort_values(by=['Country','days_after_100'])
     return covid_country_pdf_100
 
