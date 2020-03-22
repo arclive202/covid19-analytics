@@ -115,6 +115,17 @@ def ingest_refine_usa():
     us_covid_pdf = us_covid_pdf.rename(columns={"Province_State": "State"})
     return us_covid_pdf
 
+def get_covid_ts_days_after_100(covid_world_pdf):
+    covid_pdf_after_100_journey=covid_world_pdf[covid_world_pdf['Confirmed']>100].sort_values(['Country','DateTime'],ascending=[True,True])
+    country_arr=covid_pdf_after_100_journey.Country.unique()
+    covid_pdf_after_100_journey=covid_pdf_after_100_journey.drop(columns=['index'])
+    covid_country_pdf_100=pd.DataFrame()
+    for country in country_arr:
+        covid_country_pdf_100=covid_country_pdf_100.append(covid_pdf_after_100_journey[covid_pdf_after_100_journey['Country']==country].reset_index(drop=True).reset_index(drop=False))
+    covid_country_pdf_100['days_after_100']=covid_country_pdf_100['index']
+    covid_country_pdf_100=covid_country_pdf_100[covid_country_pdf_100['Country']!='China'].sort_values(by=['Country','days_after_100'])
+    return covid_coutry_pdf_100
+
 def get_covid_ts_no_china(covid_pdf):
   covid_no_chi_pdf=covid_pdf[covid_pdf['Country']!='China' ]. \
             sort_values(['DateTime','Confirmed'],ascending=[True,False]).groupby('Date').head(50)
