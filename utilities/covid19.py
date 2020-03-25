@@ -56,7 +56,8 @@ def ingest():
   return covid_pdf
 
 def ingest_refine_world():
-    covid_pdf = pd.read_csv('https://query.data.world/s/mszgcko2hys36laqy7rlcfm6nnptwx')
+    #covid_pdf = pd.read_csv('https://query.data.world/s/mszgcko2hys36laqy7rlcfm6nnptwx')
+    covid_pdf = pd.read_csv('https://raw.githubusercontent.com/Pradeep39/covid19-analytics/master/data/COVID_19_cases.csv')
 
     covid_pdf = covid_pdf.pivot_table(
             values='Cases', 
@@ -90,7 +91,8 @@ def ingest_refine_world():
     return covid_pdf
 
 def ingest_refine_usa():
-    us_covid_pdf = pd.read_csv('https://query.data.world/s/mszgcko2hys36laqy7rlcfm6nnptwx')
+    #us_covid_pdf = pd.read_csv('https://query.data.world/s/mszgcko2hys36laqy7rlcfm6nnptwx')
+    us_covid_pdf = pd.read_csv('https://raw.githubusercontent.com/Pradeep39/covid19-analytics/master/data/COVID_19_cases.csv')  
     us_covid_pdf = us_covid_pdf.pivot_table(
             values='Cases', 
             index=['Date', 'Country_Region','Province_State'], 
