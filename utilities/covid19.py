@@ -40,16 +40,16 @@ def refine(covid_df):
     
     return covid_refined_pdf
     
-def ingest():
-  confirmed_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv'
+def ingest(a,b,c):
+  #confirmed_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv'
   #confirmed_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/archived_data/archived_time_series/time_series_19-covid-Confirmed_archived_0325.csv'
-  covid_confirmed_df = pd.read_csv(confirmed_ts_url)
-  deaths_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv'
+  covid_confirmed_df = a
+  #deaths_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv'
   #deaths_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/archived_data/archived_time_series/time_series_19-covid-Deaths_archived_0325.csv'
-  covid_deaths_df = pd.read_csv(deaths_ts_url)
-  recovered_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv'
+  covid_deaths_df = b
+  #recovered_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv'
   #recovered_ts_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/archived_data/archived_time_series/time_series_19-covid-Recovered_archived_0325.csv'
-  covid_recovered_df = pd.read_csv(recovered_ts_url)
+  covid_recovered_df = c
   covid_confirmed_pdf=refine(covid_confirmed_df)
   covid_deaths_pdf=refine(covid_deaths_df)
   covid_recovered_pdf=refine(covid_recovered_df)
